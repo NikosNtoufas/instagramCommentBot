@@ -1,4 +1,8 @@
-﻿using InstagramApiSharp.API.Builder;
+﻿using FireSharp;
+using FireSharp.Config;
+using FireSharp.Interfaces;
+using FireSharp.Response;
+using InstagramApiSharp.API.Builder;
 using InstagramApiSharp.Classes;
 using InstagramApiSharp.Logger;
 using System;
@@ -16,10 +20,31 @@ namespace TestINsta
     {
 
         static readonly HttpClient client = new HttpClient();
-
-
+        
         static async Task Main(string[] args)
         {
+            IFirebaseConfig config = new FirebaseConfig()
+            {
+                BasePath = "https://instagramsmartbot-default-rtdb.firebaseio.com/",
+                AuthSecret = "i8DPDoHbqda0tUJTOK26rrNskD24KCxlJXkddO8L",
+            };
+
+            
+            
+           
+
+
+            FirebaseDbHandler firebaseDbHandler = new FirebaseDbHandler(config);
+
+            if (firebaseDbHandler.fclient == null)
+            { 
+                Console.Write("\nPress any key to exit...");
+                Console.ReadKey(true);
+                Environment.Exit(0);
+            }
+
+            firebaseDbHandler.addUser(5, "nestoras");
+            firebaseDbHandler.updateComments(5, 1,2);
             string username;
             string password;
             string mediaUrl;
@@ -30,27 +55,27 @@ namespace TestINsta
             string token = "";
             if (response.IsSuccessStatusCode)
             {
-
+               
                 // Get the response
                 token = await response.Content.ReadAsStringAsync();
             }
 
-            if (token == "")
+            if(token=="")
             {
                 Console.Write("\nSomething went wrong! Check your internet connection\n");
                 Console.Write("\nPress any key to exit...");
                 Console.ReadKey(true);
                 Environment.Exit(0);
             }
-            if (token != "oAaaTsBYbE9Y2xFNuh3n")
+            if(token!="oAaaTsBYbE9Y2xFNuh3n")
             {
                 Console.Write("\nSomething went wrong!Your version of instaCommentBot is not app to date!\n");
                 Console.Write("\nPress any key to exit...");
                 Console.ReadKey(true);
                 Environment.Exit(0);
             }
-
-
+ 
+      
 
             InstagramApiHandler handler = new InstagramApiHandler();
 
@@ -76,7 +101,7 @@ namespace TestINsta
 
             }
 
-            Console.WriteLine("Give the media's url");
+            Console.WriteLine("Give the media's url(Copy the url of the photo from browser and paste it here)");
             mediaUrl = Console.ReadLine();
 
             while (true)
@@ -97,7 +122,7 @@ namespace TestINsta
 
             Console.Write("\n--------------------------------------------------------------\n");
 
-            while (true)
+            while(true)
             {
                 Console.Write("\nPress 1 to start commenting\nPress 2 to see the number of your comments in this media\n" +
                "press exit if you want to exit application\n");
@@ -107,9 +132,9 @@ namespace TestINsta
                     try
                     {
                         int number = 0;
-                        while (true)
+                        while(true)
                         {
-                            Console.Write("\nHow many friends do you want to tag on each comment?\n");
+                            Console.Write("\nThe insta autocommenter will tag friends from your close friends list.\nHow many friends do you want to tag on each comment?\n");
                             string numOfFriends = Console.ReadLine();
                             int n;
                             bool isNumeric = int.TryParse(numOfFriends, out n);
@@ -137,10 +162,10 @@ namespace TestINsta
                 else if (go.Equals("2"))
                 {
                     int count = await handler.GetNumberrOfYourComments();
-                    Console.Write("\nΥou have made " + count + " comments in the current media!\n");
+                    Console.Write("\nΥou have made "+count +" comments in the current media!\n");
 
                 }
-                else if (go.Equals("exit"))
+                else if(go.Equals("exit"))
                 {
                     Environment.Exit(0);
                 }
@@ -149,9 +174,9 @@ namespace TestINsta
                     Console.Write("Select one of the options to continue!");
                 }
 
-
+               
             }
-
+           
 
 
 
@@ -162,9 +187,12 @@ namespace TestINsta
             handler.endAppAndWriteLogs();
 
 
-
+           
 
         }
+
+
+
 
         static string GetPassword()
         {
@@ -193,5 +221,5 @@ namespace TestINsta
 
     }
 
-
+    
 }

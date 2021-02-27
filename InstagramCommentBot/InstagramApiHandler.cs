@@ -63,7 +63,7 @@ namespace TestINsta
         {
             return _instaApi.IsUserAuthenticated;
         }
-
+     
 
 
         public async Task initializeApi(string userName, string password)
@@ -149,22 +149,22 @@ namespace TestINsta
                 Stopwatch stop = Stopwatch.StartNew();
                 Stopwatch stopTotal = Stopwatch.StartNew();
 
+                int friendsInComment = 0;
 
                 while (true)
                 {
-                    int friendsInComment = 0;
                     foreach (var user in friends.closeFriends)
                     {
-
+                       
 
                         comment += "@" + user + " ";
                         friendsInComment++;
-                        if (friendsInComment == number)
+                        if (friendsInComment==number)
                         {
                             try
                             {
 
-                                if (commentsAdded != 0 && commentsAdded % 100 == 0)
+                                if (commentsAdded !=0 && commentsAdded % 100 == 0)
                                 {
                                     Console.WriteLine("Sleeping for one hour...");
                                     await LoadCloseFriendsAsync();
@@ -220,7 +220,7 @@ namespace TestINsta
 
 
                                         sleep.HourSleeperCounter++;
-                                        if (sleep.HourSleeperCounter == 10)
+                                        if (sleep.HourSleeperCounter == 6)
                                         {
                                             Console.WriteLine("Sleeping for one hour...");
                                             await LoadCloseFriendsAsync();
@@ -239,7 +239,7 @@ namespace TestINsta
                                     }
 
                                 }
-
+                                
                                 comment = "";
                                 friendsInComment = 0;
                                 //Console.Write("\nMediaId:" + media.Value);
@@ -255,7 +255,7 @@ namespace TestINsta
 
                 }
             }
-
+           
 
 
         }
@@ -266,11 +266,11 @@ namespace TestINsta
             {
                 var mediaA = await _instaApi.CommentProcessor.GetMediaCommentsAsync(Media.Value, PaginationParameters.MaxPagesToLoad(100000));
 
-                if (!mediaA.Succeeded)
+                if(!mediaA.Succeeded)
                     return 0;
                 string username = _instaApi.GetLoggedUser().UserName;
 
-                int usersComments = mediaA.Value.Comments.Where(c => c.User.UserName.Equals(username)) != null ?
+                int usersComments = mediaA.Value.Comments.Where(c => c.User.UserName.Equals(username))!=null ?
                      mediaA.Value.Comments.Where(c => c.User.UserName.Equals(username)).Count() : 0;
                 return usersComments;
             }
@@ -278,7 +278,7 @@ namespace TestINsta
             {
                 return 0;
             }
-
+          
         }
 
         public async Task LoadCloseFriendsAsync()
@@ -297,7 +297,7 @@ namespace TestINsta
         }
 
 
-
+       
         public void endAppAndWriteLogs()
         {
 
