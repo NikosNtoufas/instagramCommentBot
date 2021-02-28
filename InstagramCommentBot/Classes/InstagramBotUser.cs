@@ -1,24 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace TestINsta
+namespace InstagramCommentBot
 {
     internal class InstagramBotUser
     {
 
-        public int InstagramUserId { get; set; }
+        public long InstagramUserId { get; set; }
         public string InstagramUserName { get; set; }
-        public List<InstagramMedia> media { get; set; } = new List<InstagramMedia>();
+        public string DateOfSubscription { get; set; }
+        public List<InstagramMedia> Media { get; set; } = new List<InstagramMedia>();
        
         public InstagramBotUser()
         {
             
         }
 
-        public InstagramBotUser(int userId,string name)
+        public InstagramBotUser(long userId,string name,string date)
         {
             this.InstagramUserId = userId;
             this.InstagramUserName = name;
-            this.media = new List<InstagramMedia>();
+            this.Media = new List<InstagramMedia>();
+            this.DateOfSubscription = date;
         }
     }
 }

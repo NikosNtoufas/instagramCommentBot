@@ -14,7 +14,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestINsta
+namespace InstagramCommentBot
 {
     class Program
     {
@@ -23,63 +23,34 @@ namespace TestINsta
         
         static async Task Main(string[] args)
         {
-            IFirebaseConfig config = new FirebaseConfig()
-            {
-                BasePath = "https://instagramsmartbot-default-rtdb.firebaseio.com/",
-                AuthSecret = "i8DPDoHbqda0tUJTOK26rrNskD24KCxlJXkddO8L",
-            };
-
-            
-            
-           
-
-
-            FirebaseDbHandler firebaseDbHandler = new FirebaseDbHandler(config);
-
-            if (firebaseDbHandler.fclient == null)
-            { 
-                Console.Write("\nPress any key to exit...");
-                Console.ReadKey(true);
-                Environment.Exit(0);
-            }
-
-            firebaseDbHandler.addUser(5, "nestoras");
-            firebaseDbHandler.updateComments(5, 1,2);
             string username;
             string password;
             string mediaUrl;
 
-
-
-            HttpResponseMessage response = client.GetAsync("https://tokeninstabot.herokuapp.com/token").Result;  // Blocking call! 
-            string token = "";
-            if (response.IsSuccessStatusCode)
-            {
-               
-                // Get the response
-                token = await response.Content.ReadAsStringAsync();
-            }
-
-            if(token=="")
-            {
-                Console.Write("\nSomething went wrong! Check your internet connection\n");
-                Console.Write("\nPress any key to exit...");
-                Console.ReadKey(true);
-                Environment.Exit(0);
-            }
-            if(token!="oAaaTsBYbE9Y2xFNuh3n")
+            //check if the version of the app is the latest
+            if (!TokenHandler.AppIsUpToDate(client))
             {
                 Console.Write("\nSomething went wrong!Your version of instaCommentBot is not app to date!\n");
                 Console.Write("\nPress any key to exit...");
                 Console.ReadKey(true);
                 Environment.Exit(0);
             }
- 
-      
 
-            InstagramApiHandler handler = new InstagramApiHandler();
+            //initialize firebaseDBhandler
+            FirebaseDbHandler firebaseDbHandler = new FirebaseDbHandler();
 
+            if (firebaseDbHandler.fclient == null)
+            {
+                //connection failed
+                Console.Write("\nPress any key to exit...");
+                Console.ReadKey(true);
+                Environment.Exit(0);
+            }
 
+   
+            InstagramApiHandler instgramApiHandler = new InstagramApiHandler(firebaseDbHandler);
+
+            //set user 
             while (true)
             {
                 Console.WriteLine("Give username:");
@@ -91,10 +62,11 @@ namespace TestINsta
                 password = GetPassword();
                 Console.WriteLine("\n");
 
-                await handler.initializeApi(username, password);
-                if (handler.userSuccessfullyLoggedIn())
+                await instgramApiHandler.SetUser(username, password);
+
+                if (instgramApiHandler.userSuccessfullyLoggedIn())
                 {
-                    await handler.LoadCloseFriendsAsync();
+                    await instgramApiHandler.LoadCloseFriendsAsync();
                     break;
                 }
                 Console.WriteLine("Wrong credentials! Try again, press exit if you want to exit application\n");
@@ -104,10 +76,11 @@ namespace TestINsta
             Console.WriteLine("Give the media's url(Copy the url of the photo from browser and paste it here)");
             mediaUrl = Console.ReadLine();
 
+            //set media
             while (true)
             {
-                await handler.InitializeMedia(mediaUrl);
-                if (handler.MediaInitializedSuccessfully())
+                await instgramApiHandler.InitializeMedia(mediaUrl);
+                if (instgramApiHandler.MediaInitializedSuccessfully())
                     break;
 
                 //wrong url,try again or exit
@@ -149,7 +122,8 @@ namespace TestINsta
                             }
 
                         }
-                        await handler.CommentCurrMedia(number);
+                        //start commenting
+                        await instgramApiHandler.CommentCurrMedia(number);
                     }
                     catch (Exception e)
                     {
@@ -161,7 +135,7 @@ namespace TestINsta
                 }
                 else if (go.Equals("2"))
                 {
-                    int count = await handler.GetNumberrOfYourComments();
+                    int count = await instgramApiHandler.GetNumberrOfYourComments();
                     Console.Write("\nΥou have made "+count +" comments in the current media!\n");
 
                 }
@@ -184,7 +158,7 @@ namespace TestINsta
             Console.ReadKey(true);
 
 
-            handler.endAppAndWriteLogs();
+            instgramApiHandler.endAppAndWriteLogs();
 
 
            

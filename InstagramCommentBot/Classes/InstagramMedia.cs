@@ -1,18 +1,26 @@
-﻿namespace TestINsta
+﻿namespace InstagramCommentBot
 {
     internal class InstagramMedia
     {
-        public int mediaId { get; set; }
-        public int comments { get; set; } = 0;
+        public string MediaId { get; set; }
+        public long ProfileId { get; set; }
+        public string ProfileName { get; set; }
+        public string MediaUrl { get; set; }
+        public int Comments { get; set; } = 0;
 
         public InstagramMedia()
         {
            
         }
 
-        public InstagramMedia(int id)
+        public InstagramMedia(string mediaId,long profileId,string profileName="",string mediaUrl="",int newComments=0)
         {
-            this.mediaId = id;
+            this.MediaId = mediaId;
+            this.ProfileId = profileId;
+            this.ProfileName = profileName;
+            this.MediaUrl = mediaUrl;
+            this.Comments = newComments;
         }
+
     }
 }
